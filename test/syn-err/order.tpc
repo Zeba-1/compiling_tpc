@@ -1,0 +1,5 @@
+int main(void){
+    if(5 <! 4){
+        return 1;
+    }
+}

@@ -1,0 +1,7 @@
+int 98flut() {
+    return 98;
+}
+
+int main(void) {
+    return 98flut();
+}

@@ -1,0 +1,6 @@
+int main(void){
+    int a, b;
+    if((a==b) && (b==5)){
+        return 1;
+    }
+}

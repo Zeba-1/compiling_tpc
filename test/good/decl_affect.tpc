@@ -1,0 +1,6 @@
+int main(void) {
+    int y;
+    int i, j = 5;
+    char c = 'a' + 'c';
+    return 0;
+}

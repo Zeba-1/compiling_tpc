@@ -1,0 +1,13 @@
+int r, ju;
+
+int add(int a, int b) {
+    int res;
+    res = a + b;
+    return res;
+}
+
+int main(void) {
+    r = add(45, 5);
+    r_to_return = add(5, add(45, 5));
+    return 0;
+}
