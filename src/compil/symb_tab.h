@@ -1,16 +1,29 @@
-#ifndef __SYMB_TAB__
-#define __SYMB_TAB__
+#ifndef __SYMB__
+#define __SYMB__
 
-#include <string.h>
-#include <stdio.h>
+#define INITIAL_TAB_SIZE 20
 
-typedef struct symb_tab {
+#include "../tree.h"
+
+typedef struct var {
+    char* name;
+    char* type;
+}Var;
+
+typedef struct {
     char* fun_name;
-    char** table;
+    int max_size_tab;
     int size_tab;
-    int global;
+    Var* var_tab;
 }Symb_tab;
 
-int add_symb(Symb_tab tab, char* symb);
+typedef struct {
+    Symb_tab global_tab;
+    Symb_tab symb_tab[20];
+    int size_tab;
+}Prog_symb_tab;
+
+int check_add_symb(Symb_tab* tab, Node symb);
+void read_prog(Node* tree, Prog_symb_tab* prog_symb_tab);
 
 #endif

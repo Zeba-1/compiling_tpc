@@ -78,7 +78,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 15 "src/gram.y"
+#line 16 "src/gram.y"
 {
   Node* node;
   char* name;

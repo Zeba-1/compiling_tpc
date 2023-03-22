@@ -1,4 +1,6 @@
-int ex(int test){
+int glb_cmpt;
+
+int ex(int test, char test2){
     return test;
 }
 
@@ -15,4 +17,4 @@ int main(void){
     b = 10; //ceci est un commentaire
 }
 
-/* Un autre commentaire */w
+/* Un autre commentaire */

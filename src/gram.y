@@ -7,7 +7,8 @@
   extern int lineno;
   extern int charno;
 
-  Node* Tree;
+  extern Node* Tree;
+  extern FILE* yyin;
 %}
 
 %token VOID IF ELSE WHILE RETURN
@@ -295,53 +296,6 @@ ListExp:
     |  Exp                                      {$$=$1;}
     ;
 %%
-
-int main(int argc, char const *argv[]) {
-    int i;
-    int help = 0;
-    int tree = 0;
-    int stdinRedifined = 0;
-
-    // Lecture des arguments
-    for (i=1; i<argc; i++) {
-        if(strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
-            help = 1;
-        else if(strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--tree") == 0)
-            tree = 1;
-        else {
-            // We redifine stdin with the first name we meet
-            if (!stdinRedifined) {
-                stdin = freopen(argv[i], "r", stdin);
-                stdinRedifined = 1;
-                if (stdin == NULL) {
-                    printf("invalid file name: %s\n", argv[i]);
-                    return 2;
-                }
-                break;
-            }
-            printf("invalid arg: %s\n", argv[i]);
-            return 2;
-        }
-    }
-
-    // help
-    if(help) {
-        printf("--- COMMAND ---\n");
-        printf("-t > print execution tree\n");
-        printf("-h > print help tab\n");
-        printf("-- USE FILES --\n");
-        printf("./tpcas [-OPTION] < [FILE]\n");
-        return 0;
-    }
-
-    int code = yyparse();
-
-    if(tree) {
-        printTree(Tree);
-        free(Tree);
-    }
-    return code;
-}
 
 int yyerror(char * msg) {
     printf("%s at line %d (after char %d)\n", msg, lineno, charno);
