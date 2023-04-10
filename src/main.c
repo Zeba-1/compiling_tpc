@@ -16,6 +16,13 @@ extern FILE* yyin;
 int yyparse(void);
 
 /* function */
+void print_help() {
+    printf("--- COMMAND ---\n");
+    printf("-t > print execution tree\n");
+    printf("-h > print help tab\n");
+    printf("-- USE FILES --\n");
+    printf("./tpcas [-OPTION] < [FILE]\n");
+}
 
 int main(int argc, char const *argv[]) {
     int i;
@@ -50,11 +57,7 @@ int main(int argc, char const *argv[]) {
 
     // help
     if(help) {
-        printf("--- COMMAND ---\n");
-        printf("-t > print execution tree\n");
-        printf("-h > print help tab\n");
-        printf("-- USE FILES --\n");
-        printf("./tpcas [-OPTION] < [FILE]\n");
+        print_help();
         return 0;
     }
 
@@ -65,9 +68,14 @@ int main(int argc, char const *argv[]) {
         printTree(Tree);
     }
 
-    /* traduction */
+    /*** PARTIE COMPILATION ***/
+
+    /* simbtab & sementic */
     read_prog(Tree, &prog_symb_tab);
-    printf("%s: %s\n", prog_symb_tab.symb_tab[1].var_tab[0].name, prog_symb_tab.global_tab.var_tab[0].type);
+    check_semantique(Tree->firstChild, &prog_symb_tab);
+
+
+    /* traduction */
 
     free(Tree);
     return code;

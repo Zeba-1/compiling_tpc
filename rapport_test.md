@@ -1,10 +1,10 @@
-# Test du Wed Mar 22 18:13:30 CET 2023
+# Test du Wed Apr  5 18:14:31 CEST 2023
 ## --- Good test ---
-- test/good/add.tpc: 0
+- test/good/add.tpc: 139
 - test/good/and.tpc: 0
 - test/good/char.tpc: 0
 - test/good/decl_affect.tpc: 0
-- test/good/exemple.tpc: 0
+- test/good/exemple.tpc: 139
 - test/good/or.tpc: 0
 - test/good/order.tpc: 0
 - test/good/type.tpc: 0
@@ -17,3 +17,4 @@
 - test/syn-err/name_variable.tpc: 139
 - test/syn-err/or.tpc: 139
 - test/syn-err/order.tpc: 0
+- test/syn-err/redef.tpc: 0

@@ -6,6 +6,7 @@
 #include "../tree.h"
 
 typedef struct var {
+    int param;
     char* name;
     char* type;
 }Var;
@@ -23,7 +24,8 @@ typedef struct {
     int size_tab;
 }Prog_symb_tab;
 
-int check_add_symb(Symb_tab* tab, Node symb);
-void read_prog(Node* tree, Prog_symb_tab* prog_symb_tab);
+int check_add_symb(Symb_tab* tab, Node symb, int add);
+int read_prog(Node* tree, Prog_symb_tab* prog_symb_tab);
+int check_semantique(Node* tree, Prog_symb_tab* prog_symb_tab);
 
 #endif
