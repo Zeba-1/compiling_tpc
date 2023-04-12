@@ -74,6 +74,7 @@ EnTeteFonct:
                                                     $$ = makeNode(_DECL_FUN);
                                                     $$->name = strdup($2);
                                                     $$->type = strdup($1);
+                                                    $$->fun = 1;
                                                     addChild($$, $4);
                                                 }
     |  VOID IDENT '(' Parametres ')'            {
@@ -96,12 +97,14 @@ ListTypVar:
                                                     $$ = makeNode(_DECL_VAR);
                                                     $$->name = strdup($4);
                                                     $$->type = strdup($3);
+                                                    $$->param = 1;
                                                     addSibling($$, $1);
                                                 }
     |  TYPE IDENT                               {
                                                     $$ = makeNode(_DECL_VAR);
                                                     $$->name = strdup($2);
                                                     $$->type = strdup($1);
+                                                    $$->param = 1;
                                                 }
     ;
 Corps: '{' DeclVars SuiteInstr '}'              {
@@ -190,6 +193,7 @@ Instr:
                                                 }
     |  IDENT '(' Arguments  ')' ';'             {
                                                     $$ = makeNode(_FUN);
+                                                    $$->name = strdup($1);
                                                     addChild($$, $3);
                                                 }
     |  RETURN Exp ';'                           {

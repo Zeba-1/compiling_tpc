@@ -466,11 +466,11 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    28,    28,    35,    44,    47,    53,    59,    62,    67,
-      73,    79,    86,    89,    95,   101,   107,   113,   128,   131,
-     137,   146,   153,   159,   167,   170,   175,   180,   186,   191,
-     195,   199,   202,   205,   207,   213,   215,   221,   223,   229,
-     231,   237,   239,   245,   247,   253,   255,   261,   265,   266,
-     270,   274,   275,   282,   288,   289,   292,   296
+      73,    80,    87,    90,    96,   103,   110,   116,   131,   134,
+     140,   149,   156,   162,   170,   173,   178,   183,   189,   194,
+     199,   203,   206,   209,   211,   217,   219,   225,   227,   233,
+     235,   241,   243,   249,   251,   257,   259,   265,   269,   270,
+     274,   278,   279,   286,   292,   293,   296,   300
 };
 #endif
 
@@ -1515,12 +1515,13 @@ yyreduce:
                                                     (yyval.node) = makeNode(_DECL_FUN);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (5)].name));
                                                     (yyval.node)->type = strdup((yyvsp[(1) - (5)].name));
+                                                    (yyval.node)->fun = 1;
                                                     addChild((yyval.node), (yyvsp[(4) - (5)].node));
                                                 ;}
     break;
 
   case 11:
-#line 79 "src/gram.y"
+#line 80 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_DECL_FUN);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (5)].name));
@@ -1529,14 +1530,14 @@ yyreduce:
     break;
 
   case 12:
-#line 86 "src/gram.y"
+#line 87 "src/gram.y"
     {
                                                     (yyval.node) = NULL;
                                                 ;}
     break;
 
   case 13:
-#line 89 "src/gram.y"
+#line 90 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_PARAM);
                                                     addChild((yyval.node), (yyvsp[(1) - (1)].node));
@@ -1544,26 +1545,28 @@ yyreduce:
     break;
 
   case 14:
-#line 95 "src/gram.y"
+#line 96 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_DECL_VAR);
                                                     (yyval.node)->name = strdup((yyvsp[(4) - (4)].name));
                                                     (yyval.node)->type = strdup((yyvsp[(3) - (4)].name));
+                                                    (yyval.node)->param = 1;
                                                     addSibling((yyval.node), (yyvsp[(1) - (4)].node));
                                                 ;}
     break;
 
   case 15:
-#line 101 "src/gram.y"
+#line 103 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_DECL_VAR);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (2)].name));
                                                     (yyval.node)->type = strdup((yyvsp[(1) - (2)].name));
+                                                    (yyval.node)->param = 1;
                                                 ;}
     break;
 
   case 16:
-#line 107 "src/gram.y"
+#line 110 "src/gram.y"
     {
                                                     (yyval.node)=makeNode(_BODY);
                                                     addChild((yyval.node), (yyvsp[(2) - (4)].node)); addChild((yyval.node), (yyvsp[(3) - (4)].node));
@@ -1571,7 +1574,7 @@ yyreduce:
     break;
 
   case 17:
-#line 113 "src/gram.y"
+#line 116 "src/gram.y"
     {
                                                     if ((yyvsp[(1) - (4)].node) != NULL) {
                                                         (yyval.node) = (yyvsp[(1) - (4)].node);
@@ -1590,12 +1593,12 @@ yyreduce:
     break;
 
   case 18:
-#line 128 "src/gram.y"
+#line 131 "src/gram.y"
     {(yyval.node)=NULL;;}
     break;
 
   case 19:
-#line 131 "src/gram.y"
+#line 134 "src/gram.y"
     {
                                                     (yyval.node) = (yyvsp[(1) - (3)].node);
                                                     Node* t = makeNode(_DECL_VAR);
@@ -1605,7 +1608,7 @@ yyreduce:
     break;
 
   case 20:
-#line 137 "src/gram.y"
+#line 140 "src/gram.y"
     {
                                                     (yyval.node) = (yyvsp[(1) - (5)].node);
                                                     Node* a = makeNode(_ASSIGN);
@@ -1618,7 +1621,7 @@ yyreduce:
     break;
 
   case 21:
-#line 146 "src/gram.y"
+#line 149 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_ASSIGN);
                                                     Node* t = makeNode(_DECL_VAR);
@@ -1629,7 +1632,7 @@ yyreduce:
     break;
 
   case 22:
-#line 153 "src/gram.y"
+#line 156 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_DECL_VAR);
                                                     (yyval.node)->name = strdup((yyvsp[(1) - (1)].name));
@@ -1637,7 +1640,7 @@ yyreduce:
     break;
 
   case 23:
-#line 159 "src/gram.y"
+#line 162 "src/gram.y"
     {
                                                     if((yyval.node) == NULL) {
                                                         (yyval.node)=(yyvsp[(2) - (2)].node);
@@ -1649,12 +1652,12 @@ yyreduce:
     break;
 
   case 24:
-#line 167 "src/gram.y"
+#line 170 "src/gram.y"
     { (yyval.node)=NULL; ;}
     break;
 
   case 25:
-#line 170 "src/gram.y"
+#line 173 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_ASSIGN);
                                                     addChild((yyval.node), (yyvsp[(1) - (4)].node));
@@ -1663,7 +1666,7 @@ yyreduce:
     break;
 
   case 26:
-#line 175 "src/gram.y"
+#line 178 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_IF);
                                                     addChild((yyval.node), (yyvsp[(3) - (5)].node));
@@ -1672,7 +1675,7 @@ yyreduce:
     break;
 
   case 27:
-#line 180 "src/gram.y"
+#line 183 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_IF);
                                                     addChild((yyval.node), (yyvsp[(3) - (7)].node));
@@ -1682,7 +1685,7 @@ yyreduce:
     break;
 
   case 28:
-#line 186 "src/gram.y"
+#line 189 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_WHILE);
                                                     addChild((yyval.node), (yyvsp[(3) - (5)].node));
@@ -1691,15 +1694,16 @@ yyreduce:
     break;
 
   case 29:
-#line 191 "src/gram.y"
+#line 194 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_FUN);
+                                                    (yyval.node)->name = strdup((yyvsp[(1) - (5)].name));
                                                     addChild((yyval.node), (yyvsp[(3) - (5)].node));
                                                 ;}
     break;
 
   case 30:
-#line 195 "src/gram.y"
+#line 199 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_RETURN);
                                                     addChild((yyval.node), (yyvsp[(2) - (3)].node));
@@ -1707,26 +1711,26 @@ yyreduce:
     break;
 
   case 31:
-#line 199 "src/gram.y"
+#line 203 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_RETURN);
                                                 ;}
     break;
 
   case 32:
-#line 202 "src/gram.y"
+#line 206 "src/gram.y"
     {
                                                     (yyval.node) = (yyvsp[(2) - (3)].node);
                                                 ;}
     break;
 
   case 33:
-#line 205 "src/gram.y"
+#line 209 "src/gram.y"
     {(yyval.node)=NULL;;}
     break;
 
   case 34:
-#line 207 "src/gram.y"
+#line 211 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_COMP);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (3)].name));
@@ -1736,12 +1740,12 @@ yyreduce:
     break;
 
   case 35:
-#line 213 "src/gram.y"
+#line 217 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 36:
-#line 215 "src/gram.y"
+#line 219 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_COMP);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (3)].name));
@@ -1751,12 +1755,12 @@ yyreduce:
     break;
 
   case 37:
-#line 221 "src/gram.y"
+#line 225 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 38:
-#line 223 "src/gram.y"
+#line 227 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_COMP);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (3)].name));
@@ -1766,12 +1770,12 @@ yyreduce:
     break;
 
   case 39:
-#line 229 "src/gram.y"
+#line 233 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 40:
-#line 231 "src/gram.y"
+#line 235 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_COMP);
                                                     (yyval.node)->name = strdup((yyvsp[(2) - (3)].name));
@@ -1781,12 +1785,12 @@ yyreduce:
     break;
 
   case 41:
-#line 237 "src/gram.y"
+#line 241 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 42:
-#line 239 "src/gram.y"
+#line 243 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_BIN_OP);
                                                     (yyval.node)->const_val = (yyvsp[(2) - (3)].const_val);
@@ -1796,12 +1800,12 @@ yyreduce:
     break;
 
   case 43:
-#line 245 "src/gram.y"
+#line 249 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 44:
-#line 247 "src/gram.y"
+#line 251 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_BIN_OP);
                                                     (yyval.node)->const_val = (yyvsp[(2) - (3)].const_val);
@@ -1811,12 +1815,12 @@ yyreduce:
     break;
 
   case 45:
-#line 253 "src/gram.y"
+#line 257 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 46:
-#line 255 "src/gram.y"
+#line 259 "src/gram.y"
     {
                                                     // NEED TO BE FIX
                                                     (yyval.node) = makeNode(_BIN_OP);
@@ -1826,7 +1830,7 @@ yyreduce:
     break;
 
   case 47:
-#line 261 "src/gram.y"
+#line 265 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_NON);
                                                     addChild((yyval.node), (yyvsp[(2) - (2)].node));
@@ -1834,12 +1838,12 @@ yyreduce:
     break;
 
   case 48:
-#line 265 "src/gram.y"
+#line 269 "src/gram.y"
     {(yyval.node)=(yyvsp[(2) - (3)].node);;}
     break;
 
   case 49:
-#line 266 "src/gram.y"
+#line 270 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_CONST);
                                                     (yyval.node)->const_val = (yyvsp[(1) - (1)].const_val);
@@ -1847,7 +1851,7 @@ yyreduce:
     break;
 
   case 50:
-#line 270 "src/gram.y"
+#line 274 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_CONST_CHAR);
                                                     (yyval.node)->const_val = (yyvsp[(1) - (1)].const_val);
@@ -1855,12 +1859,12 @@ yyreduce:
     break;
 
   case 51:
-#line 274 "src/gram.y"
+#line 278 "src/gram.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);;}
     break;
 
   case 52:
-#line 275 "src/gram.y"
+#line 279 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_FUN);
                                                     (yyval.node)->name = strdup((yyvsp[(1) - (4)].name));
@@ -1869,7 +1873,7 @@ yyreduce:
     break;
 
   case 53:
-#line 282 "src/gram.y"
+#line 286 "src/gram.y"
     {
                                                     (yyval.node) = makeNode(_VAR);
                                                     (yyval.node)->name = strdup((yyvsp[(1) - (1)].name));
@@ -1877,17 +1881,17 @@ yyreduce:
     break;
 
   case 54:
-#line 288 "src/gram.y"
+#line 292 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
   case 55:
-#line 289 "src/gram.y"
+#line 293 "src/gram.y"
     {(yyval.node) = NULL;;}
     break;
 
   case 56:
-#line 292 "src/gram.y"
+#line 296 "src/gram.y"
     {
                                                     (yyval.node)=(yyvsp[(1) - (3)].node);
                                                     addSibling((yyval.node), (yyvsp[(3) - (3)].node));
@@ -1895,13 +1899,13 @@ yyreduce:
     break;
 
   case 57:
-#line 296 "src/gram.y"
+#line 300 "src/gram.y"
     {(yyval.node)=(yyvsp[(1) - (1)].node);;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1905 "src/gram.tab.c"
+#line 1909 "src/gram.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2115,7 +2119,7 @@ yyreturn:
 }
 
 
-#line 298 "src/gram.y"
+#line 302 "src/gram.y"
 
 
 int yyerror(char * msg) {

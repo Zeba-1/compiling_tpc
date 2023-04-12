@@ -9,6 +9,10 @@ void printError(const char* error, const char* name, const char* fun) {
   fprintf(stderr, "\033[1;31mERROR: %s (for %s) in %s\033[0m\n", error, name, fun);
 }
 
+void printWarn(const char* error, const char* name, const char* fun) {
+  fprintf(stderr, "\033[1;33mWARNING: %s (for %s) in %s\033[0m\n", error, name, fun);
+}
+
 int init_symb_tab(Symb_tab* tab, char* function_name) {
     tab->var_tab = calloc(INITIAL_TAB_SIZE, sizeof(Var));
     if (!tab->var_tab) {
@@ -38,6 +42,8 @@ static void add_symb(Symb_tab* tab, Node symb) {
 
     var_to_add.name = strdup(symb.name);
     var_to_add.type = strdup(symb.type);
+    var_to_add.param = symb.param;
+    var_to_add.fun = symb.fun;
 
     tab->var_tab[tab->size_tab] = var_to_add;
     tab->size_tab++;
@@ -76,6 +82,7 @@ int read_fuction(Node* node, Symb_tab *symb_tab) {
     switch (node->label) {
     case _BODY:
     case _PARAM:
+    case _ASSIGN:
             read_fuction(node->firstChild, symb_tab);
         break;
     case _DECL_VAR:
@@ -87,7 +94,6 @@ int read_fuction(Node* node, Symb_tab *symb_tab) {
         break;
     }
     return read_fuction(node->nextSibling, symb_tab);
-
 }
 
 /**
@@ -125,100 +131,5 @@ int read_prog(Node* tree, Prog_symb_tab* prog_symb_tab) {
     default:
         break;
     }
-    read_prog(tree->nextSibling, prog_symb_tab);
-}
-
-char* get_type(Node* tree, Prog_symb_tab* prog_symb_tab, int tab_num) {
-    int i;
-    char* type;
-
-    switch (tree->label) {
-    case _CONST:
-        return "int";
-        break;
-    case _CONST_CHAR:
-        return "char";
-        break;
-
-    case _VAR:
-        for (i = 0; i < prog_symb_tab->symb_tab[tab_num].size_tab; i++) {
-            if (!strcmp(tree->name, prog_symb_tab->symb_tab[tab_num].var_tab[i].name))
-                return  prog_symb_tab->symb_tab[tab_num].var_tab[i].type;
-        }
-        printf("LES PROBLEMES, la variable n'existe pas");
-        break;
-
-    case _FUN:
-        for (i = 0; i < prog_symb_tab->global_tab.size_tab; i++) {
-            if (strcmp(tree->name, prog_symb_tab->global_tab.var_tab[i].name))
-                type = prog_symb_tab->global_tab.var_tab[i].name;
-        }
-        break;
-
-    return type;
-    default:
-        break;
-    }
-}
-
-int check_semantique_fun(Node* tree, Prog_symb_tab* prog_symb_tab, int tab_num) {
-    Node* child; 
-    Symb_tab* fun_tab = NULL;
-    int i;
-
-    if (!tree)
-        return 0;
-
-    switch (tree->label) {
-    case _BODY:
-        return check_semantique_fun(tree->firstChild, prog_symb_tab, tab_num);
-    case _FUN:
-        for (i = 0; i < 20; i++){
-            if (!strcmp(prog_symb_tab->symb_tab[i].fun_name, tree->name))
-                fun_tab = &prog_symb_tab->symb_tab[i];
-        }
-        if (!fun_tab)
-            printf("La fonction existe pas lol\n");
-        
-        for (child = tree->firstChild, i=0; child; child = child->nextSibling, i++) {
-            if (fun_tab->var_tab[i].param) {
-                if (!strcmp(get_type(child, prog_symb_tab, tab_num), fun_tab->var_tab[i].type))
-                    continue;
-                printf("arg pas de bon type\n");
-            }else
-                printf("too few arg\n");
-        }
-        break;
-        
-    case _ASSIGN:
-        if (strcmp(get_type(tree->firstChild, prog_symb_tab, tab_num), get_type(tree->firstChild->nextSibling, prog_symb_tab, tab_num)))
-            printf("assignation incorect\n");
-        break;
-    
-    default:
-        break;
-    }
-
-    return check_semantique_fun(tree->nextSibling, prog_symb_tab, tab_num);
-}
-
-int check_semantique(Node* tree, Prog_symb_tab* prog_symb_tab) {
-    int i, fun_tab;
-    
-    if (!tree)
-        return 0;
-    
-    for (Node* n = tree; n!=NULL; n = n->nextSibling) {
-        if(n->label == _DECL_FUN) {
-            for (i = 0; i < 20; i++){
-                if (!strcmp(prog_symb_tab->symb_tab[i].fun_name, tree->name)){
-                    fun_tab = i;
-                    break;
-                }
-            }
-
-            check_semantique_fun(n->firstChild, prog_symb_tab, fun_tab);
-        }
-    }
-    return 0;
+    return read_prog(tree->nextSibling, prog_symb_tab);
 }

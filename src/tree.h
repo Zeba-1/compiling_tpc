@@ -28,6 +28,8 @@ typedef struct Node {
   int const_val;
   char* name;
   char* type;
+  int param;
+  int fun;
 } Node;
 
 Node *makeNode(label_t label);

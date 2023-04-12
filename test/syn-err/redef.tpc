@@ -1,4 +1,8 @@
-int main(void) {
-    int a;
-    a = 'a';
+char test(void){
+    return 'b';
+}
+
+int main(int a, char b) {
+    test = 5;
+    return 0;
 }

@@ -33,6 +33,8 @@ Node *makeNode(label_t label) {
   node->label = label;
   node-> firstChild = node->nextSibling = NULL;
   node->lineno=lineno;
+  node->param = 0;
+  node->fun = 0;
   return node;
 }
 

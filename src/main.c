@@ -5,6 +5,7 @@
 #include "tree.h"
 #include "gram.tab.h"
 #include "compil/symb_tab.h"
+#include "compil/semantic.h"
 
 /* global variable */
 Node* Tree;
@@ -61,7 +62,8 @@ int main(int argc, char const *argv[]) {
         return 0;
     }
 
-    int code = yyparse();
+    if (yyparse())
+        return 1;
 
     /* outuput */
     if(tree) {
@@ -71,12 +73,14 @@ int main(int argc, char const *argv[]) {
     /*** PARTIE COMPILATION ***/
 
     /* simbtab & sementic */
-    read_prog(Tree, &prog_symb_tab);
-    check_semantique(Tree->firstChild, &prog_symb_tab);
-
+    if (read_prog(Tree, &prog_symb_tab))
+        return 2;
+    if (check_semantique(Tree->firstChild, &prog_symb_tab))
+        return 2;
 
     /* traduction */
+    /* work in progress */
 
     free(Tree);
-    return code;
+    return 0;
 }

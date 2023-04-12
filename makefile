@@ -5,9 +5,12 @@ FFLAG=
 BFLAG=-d
 EXO=tpcas
 
-bin/$(EXO): obj/gram.tab.o obj/lex.yy.o obj/tree.o obj/symb_tab.o src/main.c
+bin/$(EXO): obj/gram.tab.o obj/lex.yy.o obj/tree.o obj/symb_tab.o obj/semantic.o src/main.c
 	gcc $^ -o bin/$(EXO) $(CFLAG)
 	bash test_script.sh $(EXO)
+
+obj/semantic.o: src/compil/semantic.c src/compil/semantic.h
+	gcc $< -c -o $@ $(CFLAG)
 
 obj/symb_tab.o: src/compil/symb_tab.c src/compil/symb_tab.h
 	gcc $< -c -o $@ $(CFLAG)
