@@ -10,3 +10,9 @@ for f in test/syn-err/*; do
     res=$(./bin/tpcas < "$f" 2> /dev/null)
     echo "- $f: $?" >> rapport_test.md
 done
+
+echo "## -- SemErr test --" >> rapport_test.md
+for f in test/sem-err/*; do
+    res=$(./bin/tpcas < "$f" 2> /dev/null)
+    echo "- $f: $?" >> rapport_test.md
+done

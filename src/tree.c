@@ -5,25 +5,6 @@
 #include "tree.h"
 extern int lineno;       /* from lexer */
 
-static const char *StringFromLabel[] = {
-  "PROG",
-  "DECL_VAR",
-  "DECL_FUN",
-  "PARAM",
-  "BODY",
-  "ASSIGN",
-  "VAR",
-  "FUN",
-  "CONST_CHAR",
-  "CONST",
-  "BIN_OP",
-  "COMP",
-  "RETURN",
-  "IF",
-  "NON",
-  "WHILE"
-};
-
 Node *makeNode(label_t label) {
   Node *node = malloc(sizeof(Node));
   if (!node) {

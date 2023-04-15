@@ -20,6 +20,25 @@ typedef enum {
   _WHILE
 } label_t;
 
+static const char *StringFromLabel[] = {
+  "PROG",
+  "DECL_VAR",
+  "DECL_FUN",
+  "PARAM",
+  "BODY",
+  "ASSIGN",
+  "VAR",
+  "FUN",
+  "CONST_CHAR",
+  "CONST",
+  "BIN_OP",
+  "COMP",
+  "RETURN",
+  "IF",
+  "NON",
+  "WHILE"
+};
+
 typedef struct Node {
   label_t label;
   struct Node *firstChild, *nextSibling;
