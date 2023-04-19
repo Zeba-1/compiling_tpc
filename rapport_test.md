@@ -1,4 +1,4 @@
-# Test du Sam 15 avr 2023 15:39:04 CEST
+# Test du Mar 18 avr 2023 19:41:02 CEST
 ## --- Good test ---
 - test/good/add.tpc: 0
 - test/good/and.tpc: 0

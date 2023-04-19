@@ -6,6 +6,7 @@
 #include "gram.tab.h"
 #include "compil/symb_tab.h"
 #include "compil/semantic.h"
+#include "compil/trad.h"
 
 /* global variable */
 Node* Tree;
@@ -79,7 +80,7 @@ int main(int argc, char const *argv[]) {
         return 2;
 
     /* traduction */
-    /* work in progress */
+    trad_nasm(Tree, &prog_symb_tab, "bin/test.nasm");
 
     free(Tree);
     return 0;
