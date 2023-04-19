@@ -37,7 +37,9 @@ static int check_param(Node* tree, Prog_symb_tab* prog_symb_tab, int caller_num,
         }
 
         /* check type warnig */
-        get_type(child, prog_symb_tab, caller_num, &t1);
+
+        if (get_type(child, prog_symb_tab, caller_num, &t1))
+            return 2;
         if (strcmp(t1, param_list[--nb_param].type))
             printWarn("type not match", tree->name, prog_symb_tab->symb_tab[caller_num].fun_name);
 

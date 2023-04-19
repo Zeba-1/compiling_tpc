@@ -80,7 +80,7 @@ int main(int argc, char const *argv[]) {
         return 2;
 
     /* traduction */
-    trad_nasm(Tree, &prog_symb_tab, "bin/test.nasm");
+    trad_nasm(Tree, &prog_symb_tab, "nasm/trad.asm");
 
     free(Tree);
     return 0;

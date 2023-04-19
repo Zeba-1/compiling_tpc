@@ -2,6 +2,6 @@ int main(void){
 
 }
 
-char main(void){
+char pop(void){
     
 }

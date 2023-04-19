@@ -83,13 +83,15 @@ int read_fuction(Node* node, Symb_tab *symb_tab) {
     case _BODY:
     case _PARAM:
     case _ASSIGN:
-            read_fuction(node->firstChild, symb_tab);
+            if (read_fuction(node->firstChild, symb_tab))
+                return 2;
         break;
     case _DECL_VAR:
         if (check_add_symb(symb_tab, *node, 1)){
             printError("variable redefinition", node->name, symb_tab->fun_name);
-            return 1;
+            return 2;
         }
+        break;
     default:
         break;
     }
@@ -109,7 +111,8 @@ int read_prog(Node* tree, Prog_symb_tab* prog_symb_tab) {
     switch (tree->label) {
     case _PROG:
         init_symb_tab(&prog_symb_tab->global_tab, "GLOBAL");
-        read_prog(tree->firstChild, prog_symb_tab);
+        if (read_prog(tree->firstChild, prog_symb_tab))
+            return 1;
         break;
     case _DECL_VAR:
         if (check_add_symb(&prog_symb_tab->global_tab, *tree, 1)) {
