@@ -44,6 +44,7 @@ static void add_symb(Symb_tab* tab, Node symb) {
     var_to_add.type = strdup(symb.type);
     var_to_add.param = symb.param;
     var_to_add.fun = symb.fun;
+    var_to_add.offset = -1;
 
     tab->var_tab[tab->size_tab] = var_to_add;
     tab->size_tab++;

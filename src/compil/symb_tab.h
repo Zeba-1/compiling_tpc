@@ -10,6 +10,7 @@ typedef struct var {
     int fun;
     char* name;
     char* type;
+    int offset;
 }Var;
 
 typedef struct {
