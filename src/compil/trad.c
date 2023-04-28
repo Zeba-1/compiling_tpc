@@ -8,6 +8,8 @@
  
 int nb_var = 0;
 int nb_while = 0;
+int nb_if = 0;
+int nb_cond = 0;
 
 static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab);
  
@@ -39,16 +41,93 @@ static void w_binop(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab
     fprintf(target_f, "push rax\n");
 }
 
+static void w_comp(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab, char* true, char* false) {
+    char *next_cond = malloc(sizeof(char) * 10);
+    sprintf(next_cond, "cond_%03d", ++nb_cond);
+    if (!strcmp(inst->name, "||")) {
+        if (inst->firstChild->label == _COMP) {
+            w_comp(inst->firstChild, target_f, prog_tab, fun_tab, true, next_cond);
+        }else {
+            w_instruction(inst->firstChild, target_f, prog_tab, fun_tab);
+            fprintf(target_f,"pop rax\n cmp rax, 0\n je %s\njmp %s\n",
+                    next_cond, true);
+        }
+        fprintf(target_f, "%s:\n", next_cond);
+        if (inst->firstChild->nextSibling->label == _COMP) {
+            w_comp(inst->firstChild->nextSibling, target_f, prog_tab, fun_tab, true, false);
+        }else {
+            w_instruction(inst->firstChild->nextSibling, target_f, prog_tab, fun_tab);
+            fprintf(target_f,"pop rax\n cmp rax, 0\n je %s\njmp %s\n",
+                    false, true);
+        }
+    }else if (!strcmp(inst->name, "&&")) {
+        if (inst->firstChild->label == _COMP) {
+            w_comp(inst->firstChild, target_f, prog_tab, fun_tab, next_cond, false);
+        }else {
+            w_instruction(inst->firstChild, target_f, prog_tab, fun_tab);
+            fprintf(target_f,"pop rax\n cmp rax, 0\n je %s\njmp %s\n",
+                    false, next_cond);
+        }
+        fprintf(target_f, "%s:\n", next_cond);
+        if (inst->firstChild->label == _COMP) {
+            w_comp(inst->firstChild->nextSibling, target_f, prog_tab, fun_tab, true, false);
+        }else {
+            w_instruction(inst->firstChild->nextSibling, target_f, prog_tab, fun_tab);
+            fprintf(target_f,"pop rax\n cmp rax, 0\n je %s\njmp %s\n",
+                    false, true);
+        }
+    }else {
+        w_instruction(inst, target_f, prog_tab, fun_tab);
+        if (!strcmp(inst->name, "=="))
+            fprintf(target_f, "je %s\n", true);
+        else if (!strcmp(inst->name, "!="))
+            fprintf(target_f, "jne %s\n", true);
+        else if (!strcmp(inst->name, ">"))
+            fprintf(target_f, "jg %s\n", true);
+        else if (!strcmp(inst->name, ">="))
+            fprintf(target_f, "jge %s\n", true);
+        else if (!strcmp(inst->name, "<"))
+            fprintf(target_f, "jl %s\n", true);
+        else if (!strcmp(inst->name, "<="))
+            fprintf(target_f, "jle %s\n", true);
+        fprintf(target_f, "jmp %s\n", false);
+    }
+    free(next_cond);
+}
+
 static void w_while(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab) {
-    fprintf(target_f, "w_cond_%d:\n", ++nb_while);
-    w_instruction(inst->firstChild, target_f, prog_tab, fun_tab);
-    if (!strcmp(inst->firstChild->name, "<"))
-        fprintf(target_f, "jge w_end_%d\n", nb_while); // tant que = saut si l'inverseé
+    char *winst = malloc(sizeof(char) * 12);
+    char *end = malloc(sizeof(char) * 12);
+    nb_while++;
+    sprintf(winst, "w_inst_%03d", nb_while);
+    sprintf(end, "w_end_%03d", nb_while);
+
+    fprintf(target_f, "w_cond_%03d:\n", nb_while);
+    w_comp(inst->firstChild, target_f, prog_tab, fun_tab, winst, end);
+    fprintf(target_f, "%s:\n", winst);
     for (Node* child = inst->firstChild->nextSibling; child; child = child->nextSibling)
         w_instruction(child, target_f, prog_tab, fun_tab);
     
-    fprintf(target_f, "jmp w_cond_%d\n", nb_while);
-    fprintf(target_f, "w_end_%d:\n", nb_while);
+    fprintf(target_f, "jmp w_cond_%03d\n", nb_while);
+    fprintf(target_f, "%s:\n", end);
+    free(winst); free(end);
+}
+
+static void w_if(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab) {
+    char *ifinst = malloc(sizeof(char) * 12);
+    char *ifend = malloc(sizeof(char) * 12);
+    nb_if++;
+    sprintf(ifinst, "if_inst_%03d", nb_if);
+    sprintf(ifend, "if_end_%03d", nb_if);
+
+    fprintf(target_f, "if_%03d:\n", nb_if);
+    w_comp(inst->firstChild, target_f, prog_tab, fun_tab, ifinst, ifend);
+    fprintf(target_f, "%s:\n", ifinst);
+    for (Node* child = inst->firstChild->nextSibling; child; child = child->nextSibling)
+        w_instruction(child, target_f, prog_tab, fun_tab);
+    
+    fprintf(target_f, "%s:\n", ifend);
+    free(ifinst); free(ifend);
 }
 
 static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab) {
@@ -81,6 +160,9 @@ static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Sy
         break;
     case _WHILE:
         w_while(inst, target_f, prog_tab, fun_tab);
+        break;
+    case _IF:
+        w_if(inst, target_f, prog_tab, fun_tab);
         break;
     case _COMP:
         w_instruction(inst->firstChild, target_f, prog_tab, fun_tab);

@@ -12,15 +12,17 @@ mov qword [rbp-8], rax
 push 5
 pop rax
 mov qword [rbp-16], rax
-w_cond_1:
+if_001:
 push qword [rbp-8]
 push 10
 pop rcx
 pop rax
 cmp rax, rcx
-jge w_end_1
+jl if_inst_001
+jmp if_end_001
+if_inst_001:
 push qword [rbp-8]
-push 1
+push 10
 pop rcx
 pop rax
 add rax, rcx
@@ -35,10 +37,7 @@ add rax, rcx
 push rax
 pop rax
 mov qword [rbp-16], rax
-jmp w_cond_1
-w_end_1:
-mov r12, qword [rbp-8]
-mov r13, qword [rbp-16]
+if_end_001:
 mov rsp, rbp
 pop rbp
 call show_registers
