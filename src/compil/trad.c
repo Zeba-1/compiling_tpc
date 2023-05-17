@@ -13,7 +13,7 @@ int nb_cond = 0;
 
 static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab);
  
-Var* find_var(Node *node, Symb_tab fun_tab, Prog_symb_tab prog_tab) {
+static Var* find_var(Node *node, Symb_tab fun_tab, Prog_symb_tab prog_tab) {
     for (int i = 0; i < fun_tab.size_tab; i++) {
         if (!strcmp(node->name, fun_tab.var_tab[i].name))
             return  &fun_tab.var_tab[i];
@@ -130,6 +130,13 @@ static void w_if(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fu
     free(ifinst); free(ifend);
 }
 
+static void w_args(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab) {
+    if (inst) {
+        w_args(inst->nextSibling, target_f, prog_tab, fun_tab);
+        w_instruction(inst, target_f, prog_tab, fun_tab);
+    }
+}
+
 static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Symb_tab fun_tab) {
     Var* var;
     
@@ -144,16 +151,16 @@ static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Sy
     case _ASSIGN:
         w_instruction(inst->firstChild->nextSibling, target_f, prog_tab, fun_tab);
         var = find_var(inst->firstChild, fun_tab, prog_tab);
-        fprintf(target_f, "pop rax\n"); // reserver la place
-        fprintf(target_f, "mov qword [rbp-%d], rax\n", 8*var->offset); // reserver la place
+        fprintf(target_f, "pop rax\n"); // On recupère le resultat du calcul
+        fprintf(target_f, "mov qword [rbp-%d], rax\n", 8*var->offset); // on stock le res dans la variable
         break;
     case _VAR:
         var = find_var(inst, fun_tab, prog_tab);
-        fprintf(target_f, "push qword [rbp-%d]\n", 8*var->offset); // reserver la place
+        fprintf(target_f, "push qword [rbp-%d]\n", 8*var->offset); // on stock le contenue dans la pile (pour que ceux qui en ont besoin la récupère)
         break;
     case _CONST_CHAR:
     case _CONST:
-        fprintf(target_f, "push %d\n", inst->const_val);
+        fprintf(target_f, "push %d\n", inst->const_val); // on place la constante sur la pile
         break;
     case _BIN_OP:
         w_binop(inst, target_f, prog_tab, fun_tab);
@@ -167,7 +174,16 @@ static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Sy
     case _COMP:
         w_instruction(inst->firstChild, target_f, prog_tab, fun_tab);
         w_instruction(inst->firstChild->nextSibling, target_f, prog_tab, fun_tab);
-        fprintf(target_f, "pop rcx\npop rax\ncmp rax, rcx\n");
+        fprintf(target_f, "pop rcx\npop rax\ncmp rax, rcx\n"); // cmp de deux valeur/expression
+        break;
+    case _RETURN:
+        w_instruction(inst->firstChild, target_f, prog_tab, fun_tab);
+        fprintf(target_f, "pop rax\n"); // on place la valeur de retour dans rax
+        break;
+    case _FUN:
+        w_args(inst->firstChild, target_f, prog_tab, fun_tab);
+        fprintf(target_f, "call _%s\n", inst->name); // appelle de la fonction
+        fprintf(target_f, "push rax\n"); // on place la valeur de retour dans la pile
         break;
     case _PARAM:
         w_instruction(inst->nextSibling, target_f, prog_tab, fun_tab);
@@ -179,6 +195,33 @@ static void w_instruction(Node* inst, FILE* target_f, Prog_symb_tab prog_tab, Sy
     default:
         break;
     }
+}
+
+static void w_fun(Node* tree, FILE* target_f, Prog_symb_tab prog_tab) {
+    nb_var = 0;
+    Symb_tab fun_tab;
+    /* trouve sa symb Tab */
+    for (int i = 0; i < prog_tab.size_tab; i++) {
+        if (!strcmp(tree->name, prog_tab.symb_tab[i].fun_name))
+            fun_tab = prog_tab.symb_tab[i];
+    }
+    fprintf(target_f, "_%s:\n", tree->name);
+    fprintf(target_f, "push rbp\n");
+    fprintf(target_f, "mov rbp, rsp\n");
+
+    for (int i = 0; i < fun_tab.size_tab; i++) {
+        if (!fun_tab.var_tab[i].param)
+            break;
+        fprintf(target_f, "sub rsp, 8\n"); // reserver la place
+        fun_tab.var_tab[i].offset = ++nb_var;
+        fprintf(target_f, "mov r12, qword [rbp+%d]\n", 16 + 8*i); // on passe par dessus l'ancien rbp et le pointeur de retour
+        fprintf(target_f, "mov qword [rbp-%d], r12\n", 8*fun_tab.var_tab[i].offset); // on stock le res dans la variable
+    }
+
+    w_instruction(tree->firstChild, target_f, prog_tab, fun_tab);
+    fprintf(target_f, "mov rsp, rbp\n");
+    fprintf(target_f, "pop rbp\n");
+    fprintf(target_f, "ret\n");
 }
 
 static void w_main(Node* main, FILE* target_f, Prog_symb_tab prog_tab) {
@@ -212,8 +255,12 @@ int trad_nasm(Node* tree, Prog_symb_tab prog_symb_tab, char* target_name) {
     w_begin(target_f);
 
     for (tree = tree->firstChild; tree; tree = tree->nextSibling) {
-        if (tree->label == _DECL_FUN && !strcmp(tree->name, "main"))
-            w_main(tree, target_f, prog_symb_tab);
+        if (tree->label == _DECL_FUN) {
+            if (!strcmp(tree->name, "main"))
+                w_main(tree, target_f, prog_symb_tab);
+            else
+                w_fun(tree, target_f, prog_symb_tab);
+        }
     }
     
     fclose(target_f);
